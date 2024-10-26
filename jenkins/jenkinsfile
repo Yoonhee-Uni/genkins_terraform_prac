@@ -1,0 +1,54 @@
+pipeline {
+    agent any
+
+    environment {
+        AWS_REGION = 'us-west-1' // AWS 리전 설정
+        ECR_REPO_URI = 'YOUR_ECR_REPO_URI' // 생성한 ECR 리포지토리 URI
+        IMAGE_TAG = "${env.BUILD_ID}"
+    }
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                git 'https://github.com/YOUR_USERNAME/your-github-repo.git'
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                sh 'pip install -r requirements.txt'
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh 'echo "Running tests..."' // 테스트 명령어를 여기에 추가할 수 있음
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    docker.build("${ECR_REPO_URI}:${IMAGE_TAG}")
+                }
+            }
+        }
+
+        stage('Push to ECR') {
+            steps {
+                script {
+                    // AWS ECR 로그인
+                    sh 'aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPO_URI'
+                    // 이미지 푸시
+                    sh 'docker push ${ECR_REPO_URI}:${IMAGE_TAG}'
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
+        }
+    }
+}

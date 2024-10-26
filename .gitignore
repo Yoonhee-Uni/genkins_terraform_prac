@@ -1,0 +1,16 @@
+# Terraform 관련 파일 무시
+.terraform/            
+terraform-ec2-jenkins/terraform.tfstate               
+*.tfstate.backup       
+.terraform.lock.hcl     
+
+
+# macOS나 기타 OS에서 생성하는 임시 파일
+.DS_Store
+
+
+terraform.tfvars
+*.log
+*.tmp
+node_modules/
+build/
