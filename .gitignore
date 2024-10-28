@@ -1,6 +1,7 @@
 # Terraform 관련 파일 무시
 .terraform/            
-terraform-ec2-jenkins/terraform.tfstate               
+terraform-ec2-jenkins/terraform.tfstate     
+.terraform.tfstate.lock.info          
 *.tfstate.backup       
 .terraform.lock.hcl     
 

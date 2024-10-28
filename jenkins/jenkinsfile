@@ -4,6 +4,8 @@ pipeline {
     environment {
         IMAGE_NAME = 'jenkins_practice_image'  // 생성할 Docker 이미지 이름
         CONTAINER_NAME = 'jenkins_practice_container'  // 컨테이너 이름
+        AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
+        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
     }
 
     stages {
@@ -44,6 +46,23 @@ pipeline {
                 }
             }
         }
+
+        stage('Install Terraform') {
+            steps {
+                sh 'curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -'
+                sh 'sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"'
+                sh 'sudo apt-get update && sudo apt-get install -y terraform'
+            }
+        }
+
+        stage('Run Terraform') {
+            steps {
+                sh 'terraform -version'  // Terraform 버전 확인
+                sh 'terraform init'
+                sh 'terraform plan'
+            }
+        }    
+        
     }
 
     post {
